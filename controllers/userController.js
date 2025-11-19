@@ -1,4 +1,5 @@
 const userModel = require("../models/userModel");
+const bcrypt = require("bcryptjs")
 
 console.log("✅ userRoutes file loaded");
 
@@ -23,8 +24,11 @@ const registerController = async (req, res) => {
       });
     }
 
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(password,salt)
+
     // Save a new USER in the database.
-    const newUser = new userModel({ userName, email, password });
+    const newUser = new userModel({ userName, email, password:hashedPassword });
     await newUser.save();
     res.status(201).send({
       success: true,
